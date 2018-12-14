@@ -124,7 +124,7 @@ def main():
         cell.set_linewidth(.25)
  
     plt.tight_layout()
-    plt.savefig('{}.png'.format(metric), dpi=300,bbox_inches='tight')
+    plt.savefig('/output/{}.png'.format(metric), dpi=300,bbox_inches='tight')
 
 
 if __name__ == '__main__':
