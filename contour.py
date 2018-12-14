@@ -11,12 +11,17 @@ from datetime import timezone
 import numpy as np
 import datetime as dt
 import cartopy.feature
+from cartopy.feature.nightshade import Nightshade
+#from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 matplotlib.style.use('ggplot')
 from scipy import interpolate
+#import scipy
 import sys
 import logging
 import urllib.request, json
 from pandas.io.json import json_normalize
+
+metric = sys.argv[1]
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,7 +33,7 @@ logging.basicConfig(
 
 logger = logging.getLogger()
 now = dt.datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')
-
+date = dt.datetime.now(timezone.utc) #.strftime('%Y, %m, %d, %H, %M')
 
 def main():
     plt.clf()
@@ -39,12 +44,10 @@ def main():
 
     df = json_normalize(data)
   
-    print(df)
-
     #delete low confidence measurements
     df = df.drop(df[df.cs == 0].index)
-    df = df.drop(df[df.mufd == 0].index)
-    df = df.dropna(subset=['mufd'])
+    df = df.drop(df[df[metric] == 0].index)
+    df = df.dropna(subset=[metric])
 
     #filter out data older than 1hr
     age = (dt.datetime.now() - dt.timedelta(minutes=60)).strftime('%Y-%m-%d %H:%M')
@@ -53,23 +56,24 @@ def main():
     df['time'] = pd.to_datetime(df.time)
     df['time'] = df['time'].dt.strftime('%Y-%m-%d %H:%M')
 
-    df[["mufd"]] = df[["mufd"]].apply(pd.to_numeric)
+    df[[metric]] = df[[metric]].apply(pd.to_numeric)
     df[['station.longitude']] = df[['station.longitude']].apply(pd.to_numeric)
     df[['station.latitude']] = df[['station.latitude']].apply(pd.to_numeric)
-    df[['fof2']] = df[['fof2']].apply(pd.to_numeric)
 
-    df = df.dropna(subset=['mufd'])
+    df = df.dropna(subset=[metric])
 
     df.ix[df['station.longitude'] > 180, 'station.longitude'] = df['station.longitude'] - 360
     df.sort_values(by=['station.longitude'], inplace=True)
    
+
     # grid data
+    
     numcols, numrows = 100, 100
     xi = np.linspace(df['station.longitude'].min(), df['station.longitude'].max(), numcols)
     yi = np.linspace(df['station.latitude'].min(), df['station.latitude'].max(),numrows)
     xi, yi = np.meshgrid(xi, yi)
     # interpolate safe way with no extrapolation
-    x, y, z = df['station.longitude'].values, df['station.latitude'].values, df.mufd.values
+    x, y, z = df['station.longitude'].values, df['station.latitude'].values, df[metric].values
     rbf = interpolate.Rbf(x, y, z, function='linear')
     zi = rbf(xi, yi)
     
@@ -82,23 +86,20 @@ def main():
     mycontour = plt.contourf(xi, yi, zi, 16,
                 cmap = plt.cm.get_cmap("viridis"),
                 transform=ccrs.PlateCarree(),
-                alpha=0.33)
+                alpha=0.20)
     
-    #ax.coastlines()
     ax.add_feature(cartopy.feature.LAND)
     ax.set_global()
-    
+    ax.add_feature(Nightshade(date, alpha=0.04))
+
     ax.grid(linewidth=.5, color='black', alpha=0.25, linestyle='--')
     ax.set_xticks([-180, -160, -140, -120,-100, -80, -60,-40,-20, 0, 20, 40, 60,80,100, 120,140, 160,180], crs=ccrs.PlateCarree())
     ax.set_yticks([-80, -60,-40,-20, 0, 20, 40, 60,80], crs=ccrs.PlateCarree())
     
-    #ax.set_extent([-147.07, 167.96, -51.6, 69.6], ccrs.PlateCarree())
-    ax.set_extent([-180, 180, -51.6, 69.6], ccrs.PlateCarree())
-    
     for index, row in df.iterrows():
       lon = float(row['station.longitude'])
       lat = float(row['station.latitude'])
-      ax.text(lon, lat, int(row['mufd']), fontsize=10,ha='left', transform=ccrs.PlateCarree()) 
+      ax.text(lon, lat, int(row[metric]), fontsize=10,ha='left', transform=ccrs.PlateCarree()) 
     
     plt.clabel(mycontour, inline=0, fontsize=10, fmt='%.0f')
     
@@ -106,17 +107,17 @@ def main():
     
     # Make a colorbar for the ContourSet returned by the contourf call.
     cbar = plt.colorbar(mycontour, fraction=0.03, orientation='horizontal', pad=0.02)
-    cbar.set_label('MHz')
+    #cbar.set_label('MHz') #TODO add unit
     cbar.add_lines(CS2)
     
-    plt.title("MUF(D) 3000km " + str(now) + ' @RealAF7TI')
+    plt.title(metric + ' ' + str(now))
    
-    df = df[['station.name', 'time', 'mufd', 'cs', 'altitude', 'station.longitude', 'station.latitude', 'fof2', 'tec']]
+    df = df[['station.name', 'time', metric, 'cs', 'altitude', 'station.longitude', 'station.latitude']]
 
     df = df.round(2)
 
     the_table = table(ax, df,
-          bbox=[0,-1.35,1,1],
+          bbox=[0,-1.25,1,1],
           cellLoc = 'left',)
 
     for key, cell in the_table.get_celld().items():
