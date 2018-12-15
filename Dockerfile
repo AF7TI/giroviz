@@ -8,4 +8,6 @@ RUN echo "conda activate my_cartopy_env" >> ~/.bashrc
 
 RUN conda install -y -q pandas -n my_cartopy_env
 
+RUN pip install geojsoncontour
+
 COPY contour.py /
