@@ -20,6 +20,7 @@ import sys
 import logging
 import urllib.request, json
 from pandas.io.json import json_normalize
+import geojsoncontour
 
 metric = sys.argv[1]
 
@@ -125,6 +126,15 @@ def main():
  
     plt.tight_layout()
     plt.savefig('/output/{}.png'.format(metric), dpi=300,bbox_inches='tight')
+    
+    # Convert matplotlib contour to geojson
+    geojsoncontour.contourf_to_geojson(
+        contourf=mycontour,
+        geojson_filepath='/output/{}.geojson'.format(metric),
+        min_angle_deg=3.0,
+        ndigits=2,
+        stroke_width=2,
+        fill_opacity=0.5
 
 
 if __name__ == '__main__':
