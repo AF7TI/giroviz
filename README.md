@@ -1,5 +1,5 @@
 # giroviz
-cartopy visualization environment for giro data at [metrics.af7ti.com](http://metrics.af7ti.com:8080/)
+cartopy visualization environment for giro data at [metrics.af7ti.com](http://metrics.af7ti.com)
 
 build image from Dockerfile, tag with giroviz
     `docker build -t giroviz .`
