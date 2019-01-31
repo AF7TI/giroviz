@@ -39,7 +39,7 @@ date = dt.datetime.now(timezone.utc) #.strftime('%Y, %m, %d, %H, %M')
 def main():
     plt.clf()
 
-    with urllib.request.urlopen("http://metrics.af7ti.com:8080/stations.json") as url:
+    with urllib.request.urlopen("http://metrics.af7ti.com/stations.json") as url:
         data = json.loads(url.read().decode())
         print(data)
 
