@@ -1,11 +1,24 @@
 # giroviz
-cartopy visualization environment for giro data at [metrics.af7ti.com](http://metrics.af7ti.com)
+Cartopy visualization environment for [giroapp](https://github.com/AF7TI/giroapp)
 
-build image from Dockerfile, tag with giroviz
+## Installation
+Build image from Dockerfile, tag with giroviz
     `docker build -t giroviz .`
+
+## Usage
+Provide contour.py a data source and metric to plot. A png and geojson file is saved in the current directory:
+    `docker run -e "METRICS_URI=http://metrics.af7ti.com/stations.json" -v $(pwd):/output giroviz python contour.py mufd`
     
-provide contour.py a metric to plot. a png and geojson file is saved in the current directory:
-    `docker run -v $(pwd):/output giroviz python contour.py mufd`
-    
-see available metrics in the [measurement table schema](https://github.com/AF7TI/girotick/blob/master/dbsetup.sql)
-    
+See available metrics in the [measurement table schema](https://github.com/AF7TI/girotick/blob/master/dbsetup.sql)
+
+## Running Code
+- KC2G aka @arodland has MUFD and foF2 maps at https://prop.kc2g.com/
+- Data sorces online at https://prop.kc2g.com/stations.json and http://metrics.af7ti.com/stations.json
+
+## Contributing
+Contributions welcome! Please fork and open a pull request.
+
+## Thank you
+Huge thanks to [@arodland](https://github.com/arodland/giroviz) for incorporating spherical geometry and many other improvements.
+
+Data made available through [UMass Lowell Global Ionospheric Radio observatory (GIRO)](http://umlcar.uml.edu/DIDBase/RulesOfTheRoadForDIDBase.htm)
