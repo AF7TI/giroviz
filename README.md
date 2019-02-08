@@ -2,11 +2,11 @@
 Filled 2-D contour plots of ionosphere data. Cartopy visualization environment for [giroapp](https://github.com/AF7TI/giroapp)
 
 ## Installation
-Build image from Dockerfile, tag with giroviz
+Build image from Dockerfile, tag with giroviz   
     `docker build -t giroviz .`
 
 ## Usage
-Provide contour.py a data source and metric to plot. A png and geojson file is saved in the current directory:
+Provide contour.py a data source and metric to plot. A png and geojson file is saved in the current directory:  
     `docker run -e "METRICS_URI=http://metrics.af7ti.com/stations.json" -v $(pwd):/output giroviz python contour.py mufd`
     
 See available metrics in the [measurement table schema](https://github.com/AF7TI/girotick/blob/master/dbsetup.sql)
