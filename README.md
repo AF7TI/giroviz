@@ -1,5 +1,5 @@
 # giroviz
-Cartopy visualization environment for [giroapp](https://github.com/AF7TI/giroapp)
+Filled 2-D contour plots of ionosphere data. Cartopy visualization environment for [giroapp](https://github.com/AF7TI/giroapp)
 
 ## Installation
 Build image from Dockerfile, tag with giroviz
