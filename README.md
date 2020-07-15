@@ -1,3 +1,5 @@
+# No longer maintained
+
 # giroviz
 Filled 2-D contour plots of ionosphere data. Cartopy visualization environment for [giroapp](https://github.com/AF7TI/giroapp)
 
@@ -13,7 +15,7 @@ See available metrics in the [measurement table schema](https://github.com/AF7TI
 
 ## Running Code
 - KC2G aka @arodland has MUFD and foF2 maps at https://prop.kc2g.com/
-- Data sources online at https://prop.kc2g.com/stations.json and http://metrics.af7ti.com/stations.json
+- Data sources online at https://prop.kc2g.com/api/stations.json
 
 ## Contributing
 Contributions welcome! Please fork and open a pull request.
